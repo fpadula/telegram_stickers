@@ -3,17 +3,16 @@ import yaml
 import os
 from telethon import TelegramClient
 import emoji
+
 async def process_stickers(client, sticker_filename_list, packname,
                             default_emoji):
-    # Getting client info
+    # Getting client info    
     me = await client.get_me()
     print("Creating stickers for user with phone", me.phone)
     # Processing stickers one by one
-    async with client.conversation('Stickers') as conv:
+    async with client.conversation('Stickers', max_messages=10000) as conv:
         await conv.send_message('/newpack')
-        _ = await conv.get_response()
-        # await conv.send_message('/addsticker')
-        # _ = await conv.get_response()
+        _ = await conv.get_response()        
         await conv.send_message(packname)
         _ = await conv.get_response()
         for sticker_file_name in sticker_filename_list:
@@ -26,7 +25,7 @@ async def process_stickers(client, sticker_filename_list, packname,
         await conv.send_message("/skip")
         _ = await conv.get_response()      
         await conv.send_message("sn"+packname)
-        _ = await conv.get_response()
+        _ = await conv.get_response()        
 
 def main():
     parser = argparse.ArgumentParser()
@@ -60,7 +59,7 @@ def main():
         client.loop.run_until_complete(process_stickers(client,
                                                         sticker_files_names,
                                                         pack["name"],
-                                                        pack["default_emoji"]))
+                                                        pack["default_emoji"]))        
 
 if __name__ == '__main__':
     main()
